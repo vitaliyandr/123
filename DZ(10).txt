@@ -1,0 +1,323 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+struct Product {
+    string name;
+    string manufacturer;
+    double price;
+    string group;
+    string arrivalDate;
+    string expiryDate;
+};
+
+vector<Product> inventory;
+
+// Додати товар на склад
+void addProduct() {
+    Product product;
+    cout << "Введіть назву товару: ";
+    getline(cin, product.name);
+    cout << "Введіть виробника товару: ";
+    getline(cin, product.manufacturer);
+    cout << "Введіть ціну товару: ";
+    cin >> product.price;
+    cin.ignore();  // Очистити буфер введення
+    cout << "Введіть групу товару: ";
+    getline(cin, product.group);
+    cout << "Введіть дату надходження на склад (у форматі ДД.ММ.РРРР): ";
+    getline(cin, product.arrivalDate);
+    cout << "Введіть термін придатності (у форматі ДД.ММ.РРРР): ";
+    getline(cin, product.expiryDate);
+    inventory.push_back(product);
+    cout << "Товар додано на склад.\n";
+}
+
+// Видалити товар зі складу
+void removeProduct() {
+    string productName;
+    cout << "Введіть назву товару, який потрібно видалити: ";
+    getline(cin, productName);
+    auto it = find_if(inventory.begin(), inventory.end(), [&productName](const Product& product) {
+        return product.name == productName;
+    });
+    if (it != inventory.end()) {
+        inventory.erase(it);
+        cout << "Товар видалено зі складу.\n";
+    } else {
+        cout << "Товар не знайдено на складі.\n";
+    }
+}
+
+// Замінити товар на складі
+void replaceProduct() {
+    string productName;
+    cout << "Введіть назву товару, який потрібно замінити: ";
+    getline(cin, productName);
+    auto it = find_if(inventory.begin(), inventory.end(), [&productName](const Product& product) {
+        return product.name == productName;
+    });
+    if (it != inventory.end()) {
+        Product newProduct;
+        cout << "Введіть нову назву товару: ";
+        getline(cin, newProduct.name);
+        cout << "Введіть нового виробника товару: ";
+        getline(cin, newProduct.manufacturer);
+        cout << "Введіть нову ціну товару: ";
+        cin >> newProduct.price;
+        cin.ignore();  // Очистити буфер введення
+        cout << "Введіть нову групу товару: ";
+        getline(cin, newProduct.group);
+        cout << "Введіть нову дату надходження на склад (у форматі ДД.ММ.РРРР): ";
+        getline(cin, newProduct.arrivalDate);
+        cout << "Введіть новий термін придатності (у форматі ДД.ММ.РРРР): ";
+        getline(cin, newProduct.expiryDate);
+        *it = newProduct;
+        cout << "Товар замінено на складі.\n";
+    } else {
+        cout << "Товар не знайдено на складі.\n";
+    }
+}
+
+// Пошук товару за назвою
+void searchByName() {
+    string productName;
+    cout << "Введіть назву товару для пошуку: ";
+    getline(cin, productName);
+    vector<Product> results;
+    for (const Product& product : inventory) {
+        if (product.name == productName) {
+            results.push_back(product);
+        }
+    }
+    if (!results.empty()) {
+        cout << "Результати пошуку за назвою \"" << productName << "\":\n";
+        for (const Product& product : results) {
+            cout << "Назва: " << product.name << endl;
+            cout << "Виробник: " << product.manufacturer << endl;
+            cout << "Ціна: " << product.price << endl;
+            cout << "Група: " << product.group << endl;
+            cout << "Дата надходження: " << product.arrivalDate << endl;
+            cout << "Термін придатності: " << product.expiryDate << endl;
+            cout << "----------------------\n";
+        }
+    } else {
+        cout << "Товари за назвою \"" << productName << "\" не знайдено на складі.\n";
+    }
+}
+
+// Пошук товару за виробником
+void searchByManufacturer() {
+    string manufacturerName;
+    cout << "Введіть виробника товару для пошуку: ";
+    getline(cin, manufacturerName);
+    vector<Product> results;
+    for (const Product& product : inventory) {
+        if (product.manufacturer == manufacturerName) {
+            results.push_back(product);
+        }
+    }
+    if (!results.empty()) {
+        cout << "Результати пошуку за виробником \"" << manufacturerName << "\":\n";
+        for (const Product& product : results) {
+            cout << "Назва: " << product.name << endl;
+            cout << "Виробник: " << product.manufacturer << endl;
+            cout << "Ціна: " << product.price << endl;
+            cout << "Група: " << product.group << endl;
+            cout << "Дата надходження: " << product.arrivalDate << endl;
+            cout << "Термін придатності: " << product.expiryDate << endl;
+            cout << "----------------------\n";
+        }
+    } else {
+        cout << "Товари за виробником \"" << manufacturerName << "\" не знайдено на складі.\n";
+    }
+}
+
+// Пошук товару за ціною
+void searchByPrice() {
+    double price;
+    cout << "Введіть ціну товару для пошуку: ";
+    cin >> price;
+    cin.ignore();  // Очистити буфер введення
+    vector<Product> results;
+    for (const Product& product : inventory) {
+        if (product.price == price) {
+            results.push_back(product);
+        }
+    }
+    if (!results.empty()) {
+        cout << "Результати пошуку за ціною " << price << ":\n";
+        for (const Product& product : results) {
+            cout << "Назва: " << product.name << endl;
+            cout << "Виробник: " << product.manufacturer << endl;
+            cout << "Ціна: " << product.price << endl;
+            cout << "Група: " << product.group << endl;
+            cout << "Дата надходження: " << product.arrivalDate << endl;
+            cout << "Термін придатності: " << product.expiryDate << endl;
+            cout << "----------------------\n";
+        }
+    } else {
+        cout << "Товари за ціною " << price << " не знайдено на складі.\n";
+    }
+}
+
+// Пошук товару за групою
+void searchByGroup() {
+    string group;
+    cout << "Введіть групу товару для пошуку: ";
+    getline(cin, group);
+    vector<Product> results;
+    for (const Product& product : inventory) {
+        if (product.group == group) {
+            results.push_back(product);
+        }
+    }
+    if (!results.empty()) {
+        cout << "Результати пошуку за групою \"" << group << "\":\n";
+        for (const Product& product : results) {
+            cout << "Назва: " << product.name << endl;
+            cout << "Виробник: " << product.manufacturer << endl;
+            cout << "Ціна: " << product.price << endl;
+            cout << "Група: " << product.group << endl;
+            cout << "Дата надходження: " << product.arrivalDate << endl;
+            cout << "Термін придатності: " << product.expiryDate << endl;
+            cout << "----------------------\n";
+        }
+    } else {
+        cout << "Товари за групою \"" << group << "\" не знайдено на складі.\n";
+    }
+}
+
+// Пошук товару за датою надходження на склад
+void searchByArrivalDate() {
+    string arrivalDate;
+    cout << "Введіть дату надходження товару на склад (у форматі ДД.ММ.РРРР): ";
+    getline(cin, arrivalDate);
+    vector<Product> results;
+    for (const Product& product : inventory) {
+        if (product.arrivalDate == arrivalDate) {
+            results.push_back(product);
+        }
+    }
+    if (!results.empty()) {
+        cout << "Результати пошуку за датою надходження \"" << arrivalDate << "\":\n";
+        for (const Product& product : results) {
+            cout << "Назва: " << product.name << endl;
+            cout << "Виробник: " << product.manufacturer << endl;
+            cout << "Ціна: " << product.price << endl;
+            cout << "Група: " << product.group << endl;
+            cout << "Дата надходження: " << product.arrivalDate << endl;
+            cout << "Термін придатності: " << product.expiryDate << endl;
+            cout << "----------------------\n";
+        }
+    } else {
+        cout << "Товари, що надійшли на склад " << arrivalDate << ", не знайдено.\n";
+    }
+}
+
+// Пошук товару за терміном придатності
+void searchByExpiryDate() {
+    string expiryDate;
+    cout << "Введіть термін придатності товару (у форматі ДД.ММ.РРРР): ";
+    getline(cin, expiryDate);
+    vector<Product> results;
+    for (const Product& product : inventory) {
+        if (product.expiryDate == expiryDate) {
+            results.push_back(product);
+        }
+    }
+    if (!results.empty()) {
+        cout << "Результати пошуку за терміном придатності \"" << expiryDate << "\":\n";
+        for (const Product& product : results) {
+            cout << "Назва: " << product.name << endl;
+            cout << "Виробник: " << product.manufacturer << endl;
+            cout << "Ціна: " << product.price << endl;
+            cout << "Група: " << product.group << endl;
+            cout << "Дата надходження: " << product.arrivalDate << endl;
+            cout << "Термін придатності: " << product.expiryDate << endl;
+            cout << "----------------------\n";
+        }
+    } else {
+        cout << "Товари з терміном придатності " << expiryDate << " не знайдено на складі.\n";
+    }
+}
+
+// Сортування товару за ціною
+void sortByPrice() {
+    sort(inventory.begin(), inventory.end(), [](const Product& product1, const Product& product2) {
+        return product1.price < product2.price;
+    });
+    cout << "Товари відсортовані за ціною:\n";
+    for (const Product& product : inventory) {
+        cout << "Назва: " << product.name << endl;
+        cout << "Виробник: " << product.manufacturer << endl;
+        cout << "Ціна: " << product.price << endl;
+        cout << "Група: " << product.group << endl;
+        cout << "Дата надходження: " << product.arrivalDate << endl;
+        cout << "Термін придатності: " << product.expiryDate << endl;
+        cout << "----------------------\n";
+    }
+}
+
+// Сортування товару за групою
+void sortByGroup() {
+    sort(inventory.begin(), inventory.end(), [](const Product& product1, const Product& product2) {
+        return product1.group < product2.group;
+    });
+    cout << "Товари відсортовані за групою:\n";
+    for (const Product& product : inventory) {
+        cout << "Назва: " << product.name << endl;
+        cout << "Виробник: " << product.manufacturer << endl;
+        cout << "Ціна: " << product.price << endl;
+        cout << "Група: " << product.group << endl;
+        cout << "Дата надходження: " << product.arrivalDate << endl;
+        cout << "Термін придатності: " << product.expiryDate << endl;
+        cout << "----------------------\n";
+    }
+}
+
+int main() {
+    int choice;
+    while (true) {
+        cout << "Оберіть опцію:\n";
+        cout << "1. Додати товар на склад.\n";
+        cout << "2. Видалити товар зі складу.\n";
+        cout << "3. Замінити товар на складі.\n";
+        cout << "4. Пошук товару.\n";
+        cout << "5. Сортування товару.\n";
+        cout << "6. Вийти з програми.\n";
+        cout << "Ваш вибір: ";
+        cin >> choice;
+        cin.ignore();  // Очистити буфер введення
+        cout << endl;
+
+        switch (choice) {
+            case 1:
+                addProduct();
+                break;
+            case 2:
+                removeProduct();
+                break;
+            case 3:
+                replaceProduct();
+                break;
+            case 4:
+                searchMenu();
+                break;
+            case 5:
+                sortMenu();
+                break;
+            case 6:
+                cout << "Програма завершена.\n";
+                return 0;
+            default:
+                cout << "Невірний вибір. Спробуйте ще раз.\n";
+        }
+
+        cout << endl;
+    }
+    return 0;
+}
